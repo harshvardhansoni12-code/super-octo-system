@@ -19,11 +19,11 @@ export async function POST(request) {
       );
     }
 
-    const user = await prisma.user.findOne({
+    const userFound = await prisma.user.findOne({
       where: { email },
     });
     //no user found
-    if (!user) {
+    if (!userFound) {
       return NextResponse.json(
         {
           error: "User not found",
@@ -32,7 +32,7 @@ export async function POST(request) {
       );
     }
 
-    const match = await bcrypt.compare(password, user.password);
+    const match = await bcrypt.compare(password, userFound.password);
 
     // wronf password
     if (!match) {
@@ -52,11 +52,13 @@ export async function POST(request) {
         revoked: false,
         expiresAt,
         user: {
-          connect: { id: user.id },
+          connect: { id: newUser.id },
         },
       },
     });
-    const jwt_token = await jwt.sign(user.id, process.env.SECRET_KEY);
+
+    //create jwt token and set cookies
+    const jwt_token = await jwt.sign(userFound.id, process.env.SECRET_KEY);
     const cookieStore = await cookies();
     cookieStore.set("auth_token", jwt_token, {
       httpOnly: true,
