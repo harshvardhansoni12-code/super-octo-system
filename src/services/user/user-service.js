@@ -1,8 +1,5 @@
 import prisma from "@/lib/prisma";
 import bcrypt from "bcryptjs";
-import crypto from "crypto";
-import jwt from "jsonwebtoken";
-import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 export const registerUser = async (request) => {

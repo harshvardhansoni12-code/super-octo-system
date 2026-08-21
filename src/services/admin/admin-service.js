@@ -40,12 +40,16 @@ export async function createAdmin(request) {
       },
     });
 
-    const { password: _password, ...adminWithoutPassword } = admin;
-
+    if (!admin) {
+      return NextResponse.json(
+        { error: "Failed to create admin" },
+        { status: 500 },
+      );
+    }
     return NextResponse.json(
       {
         message: "Admin created successfully",
-        admin: adminWithoutPassword,
+        admin: admin.name,
       },
       { status: 201 },
     );
