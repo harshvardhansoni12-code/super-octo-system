@@ -49,40 +49,10 @@ export const registerUser = async (request) => {
         password: hashedPassword,
       },
     });
-    const tokenvalue = crypto.randomBytes(40).toString("hex");
-    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); //7days
-    const refresh_token = await prisma.refresh_token.create({
-      data: {
-        token: tokenvalue,
-        revoked: false,
-        expiresAt,
-        user: {
-          connect: { id: newUser.id },
-        },
-      },
-    });
-    const jwt_token = jwt.sign(newUser.id, process.env.SECRET_KEY);
-    const cookieStore = await cookies();
-    cookieStore.set("auth_token", jwt_token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 60 * 60 * 24, // one day
-      path: "/",
-    });
-    cookieStore.set("refresh_token", refresh_token.token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 60 * 60 * 24 * 7, // one week
-      path: "/",
-    });
-
-    const { password: _password, ...userwithoutPassword } = newUser;
     return NextResponse.json(
       {
         message: "User registered successfully",
-        user: userwithoutPassword,
+        user: newUser,
       },
       { status: 201 },
     );

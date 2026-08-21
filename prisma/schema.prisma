@@ -9,25 +9,24 @@ datasource db {
   provider = "postgresql"
 }
 
+
 model User {
   id           String         @id @default(uuid())
   email        String         @unique
   name         String?
   password     String 
+  role         String         @default("USER")
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
-  refreshToken Refresh_token?
 }
 
-model Refresh_token {
+model Admin {
   id        String   @id @default(uuid())
-  user      User     @relation(fields: [user_id], references: [id])
-  revoked   Boolean
-  token     String   @unique
+  email     String   @unique
+  name      String?
+  password  String
+  role      String   @default("ADMIN")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  expiresAt DateTime
-  user_id   String   @unique
-
-  @@map("refesh_tokens")
 }
+
