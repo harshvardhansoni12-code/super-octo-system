@@ -1,25 +1,13 @@
-"use client";
+import AuthScreen from "@/app/authscreen/page";
+import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
+import { authOptions } from "@/lib/auth";
 
-import { useEffect, useState } from "react";
-import { signIn, useSession } from "next-auth/react";
+export default async function Home() {
+  const session = await getServerSession(authOptions);
 
-export default function Home() {
-  const { data: session, status } = useSession();
+  if (session?.user?.role === "ADMIN") redirect("/admin-dashboard");
+  if (session?.user) redirect("/user-dashboard");
 
-  useEffect(() => {
-    console.log("NextAuth session:", session);
-    console.log("NextAuth status:", status);
-  }, [session, status]);
-
-  async function handleSubmit(event) {
-    event.preventDefault();
-  }
-
-  if (result?.error) {
-    setError("Invalid email or password.");
-    return;
-  }
-
-  setError("Login successful.");
-  return <div></div>;
+  return <AuthScreen />;
 }
