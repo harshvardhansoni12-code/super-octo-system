@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { CalendarDays, CheckCircle2, Circle, Plus } from "lucide-react";
 import DashboardHeader from "@/components/dashboard-header";
+import LiveChat from "@/components/live-chat";
 import { authOptions } from "@/lib/auth";
 
 export default async function UserDashboard() {
@@ -78,6 +79,9 @@ export default async function UserDashboard() {
               Team planning · 45 min
             </div>
           </section>
+        </div>
+        <div className="mt-4">
+          <LiveChat currentUserId={session.user.id} />
         </div>
       </div>
     </main>
