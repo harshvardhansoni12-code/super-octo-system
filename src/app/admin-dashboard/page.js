@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { Activity, BarChart3, UserPlus, Users } from "lucide-react";
 import DashboardHeader from "@/components/dashboard-header";
+import LiveChat from "@/components/live-chat";
 import { authOptions } from "@/lib/auth";
 
 export default async function AdminDashboard() {
@@ -84,6 +85,9 @@ export default async function AdminDashboard() {
             </button>
           </div>
         </section>
+        <div className="mt-4">
+          <LiveChat currentUserId={session.user.id} />
+        </div>
       </div>
     </main>
   );
