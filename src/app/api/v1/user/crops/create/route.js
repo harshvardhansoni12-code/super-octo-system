@@ -3,21 +3,43 @@ import { createCrop } from "@/services/user/crop-service";
 
 export async function POST(request) {
   try {
-    const cropsCreated = await createCrop(request);
-    if (!cropsCreated) {
+    const result = await createCrop(request);
+
+    if (result?.error) {
       return NextResponse.json(
-        { error: cropsCreated.error || "Unable to create crop" },
-        { status: cropsCreated.status || 400 },
+        {
+          error: result.error,
+        },
+        {
+          status: result.status || 400,
+        },
       );
     }
+
     return NextResponse.json(
-      { message: "Crop created successfully", crop: cropsCreated.crop },
-      { status: 201 },
+      {
+        message: "Crop created successfully",
+        crop: result.crop,
+      },
+      {
+        status: 201,
+      },
     );
   } catch (error) {
+    console.error(
+      "CREATE CROP API ERROR:",
+      error,
+    );
+
     return NextResponse.json(
-      { error: error.message || "Something went wrong" },
-      { status: 500 },
+      {
+        error:
+          error.message ||
+          "Something went wrong",
+      },
+      {
+        status: 500,
+      },
     );
   }
 }
