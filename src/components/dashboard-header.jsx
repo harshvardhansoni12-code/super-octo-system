@@ -16,7 +16,7 @@ export default function DashboardHeader({ name, label }) {
   }
 
   return (
-    <header className="flex items-center justify-between border-b border-[#dbe5dc] px-5 py-4 sm:px-8">
+    <header className="flex items-center overflow-hidden justify-between border-b border-[#dbe5dc] px-5 py-4 sm:px-8">
       <div className="flex items-center gap-3">
         <span className="flex size-9 items-center justify-center rounded-xl bg-[#214a38] text-[#d6e7c9]">
           <Sparkles className="size-4" />

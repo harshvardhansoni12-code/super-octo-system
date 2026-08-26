@@ -122,9 +122,9 @@ export default function AuthScreen() {
   }
 
   return (
-   <main className="flex h-screen w-full overflow-hidden bg-[#f5f7f4] text-[#17231d]">
+    <main className="flex h-screen w-full overflow-hidden bg-[#f5f7f4] text-[#17231d]">
       {/* Left: form */}
-    <section className="flex w-full min-h-0 flex-col justify-center overflow-y-auto px-6  md:w-1/2 lg:px-16">
+      <section className="flex w-full min-h-0 flex-col justify-center overflow-y-auto px-6  md:w-1/2 lg:px-16">
         <div className="mb-10 flex items-center gap-2 text-sm font-semibold tracking-[0.18em] text-[#214a38] uppercase">
           <span className="flex size-9 items-center justify-center rounded-xl  text-[#214a38]">
             <Tractor className="size-10" />
@@ -148,29 +148,6 @@ export default function AuthScreen() {
             </div>
 
             {/* Mode tabs */}
-            <div
-              className="grid grid-cols-2 rounded-xl bg-[#eef3ed] p-1"
-              role="tablist"
-            >
-              <button
-                className={`my-1 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 ${mode === "login" ? "bg-white text-[#214a38] shadow-sm" : "text-[#718078] hover:text-[#214a38]"}`}
-                onClick={() => changeMode("login")}
-                role="tab"
-                type="button"
-                aria-selected={mode === "login"}
-              >
-                Log in
-              </button>
-              <button
-                className={`my-1 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 ${mode === "signup" ? "bg-white text-[#214a38] shadow-sm" : "text-[#718078] hover:text-[#214a38]"}`}
-                onClick={() => changeMode("signup")}
-                role="tab"
-                type="button"
-                aria-selected={mode === "signup"}
-              >
-                Sign up
-              </button>
-            </div>
 
             {/* Account type pill toggle */}
             <div
@@ -184,8 +161,7 @@ export default function AuthScreen() {
                 type="button"
                 className={`flex flex-1 items-center justify-center gap-2 rounded-full px-4 py-3 text-xs font-semibold tracking-[0.05em] uppercase transition-all duration-200 ${accountType === "user" ? "bg-[#214a38] text-white shadow-sm" : "text-[#718078] hover:text-[#214a38]"}`}
               >
-                <User className="size-4" />
-                I am a user
+                <User className="size-4" />I am a user
               </button>
               <button
                 aria-pressed={accountType === "admin"}
@@ -193,8 +169,7 @@ export default function AuthScreen() {
                 type="button"
                 className={`flex flex-1 items-center justify-center gap-2 rounded-full px-4 py-3 text-xs font-semibold tracking-[0.05em] uppercase transition-all duration-200 ${accountType === "admin" ? "bg-[#214a38] text-white shadow-sm" : "text-[#718078] hover:text-[#214a38]"}`}
               >
-                <ShieldCheck className="size-4" />
-                I am an admin
+                <ShieldCheck className="size-4" />I am an admin
               </button>
             </div>
           </CardHeader>
@@ -362,10 +337,12 @@ export default function AuthScreen() {
 
         <div className="relative z-10 max-w-md">
           <h2 className="text-4xl leading-tight font-medium tracking-[-0.04em]">
-         Direct from Farm to Commercial Scale.
+            Direct from Farm to Commercial Scale.
           </h2>
           <p className="mt-5 text-base leading-6 text-[#c4d8c4]">
-          Access transparent pricing, real-time inventory, and verified logistics partners to streamline your wholesale agricultural supply chain.
+            Access transparent pricing, real-time inventory, and verified
+            logistics partners to streamline your wholesale agricultural supply
+            chain.
           </p>
 
           <div className="mt-10 grid grid-cols-2 gap-4">
