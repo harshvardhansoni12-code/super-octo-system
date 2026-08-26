@@ -122,12 +122,12 @@ export default function AuthScreen() {
   }
 
   return (
-    <main className="flex min-h-screen w-full bg-[#f5f7f4] text-[#17231d]">
+   <main className="flex h-screen w-full overflow-hidden bg-[#f5f7f4] text-[#17231d]">
       {/* Left: form */}
-      <section className="flex w-full flex-col justify-center px-6 py-10 md:w-1/2 lg:px-16">
+    <section className="flex w-full min-h-0 flex-col justify-center overflow-y-auto px-6  md:w-1/2 lg:px-16">
         <div className="mb-10 flex items-center gap-2 text-sm font-semibold tracking-[0.18em] text-[#214a38] uppercase">
-          <span className="flex size-9 items-center justify-center rounded-xl bg-[#d6e7c9] text-[#214a38]">
-            <Tractor className="size-4" />
+          <span className="flex size-9 items-center justify-center rounded-xl  text-[#214a38]">
+            <Tractor className="size-10" />
           </span>
           KisaanBazaar
         </div>
@@ -349,7 +349,7 @@ export default function AuthScreen() {
       </section>
 
       {/* Right: visual panel */}
-      <aside className="relative hidden w-1/2 flex-col justify-end overflow-hidden bg-[#214a38] p-16 text-[#f4f6ed] md:flex">
+      <aside className="relative hidden h-full w-1/2 flex-col justify-end overflow-hidden bg-[#214a38] p-16 text-[#f4f6ed] md:flex">
         <Image
           src={AUTH_IMAGE_SRC}
           alt=""
