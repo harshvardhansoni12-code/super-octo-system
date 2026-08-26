@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import { createCrop } from "@/services/user/crop-service";
+import { getCrops } from "@/services/user/crop-service";
 
-export async function POST(request) {
+export async function GET() {
   try {
-    const result = await createCrop(request);
+    const result = await getCrops();
 
     if (result?.error) {
       return NextResponse.json(
@@ -18,16 +18,16 @@ export async function POST(request) {
 
     return NextResponse.json(
       {
-        message: "Crop created successfully",
-        crop: result.crop,
+        message: "Crops fetched successfully",
+        crops: result.crops,
       },
       {
-        status: 201,
+        status: 200,
       },
     );
   } catch (error) {
     console.error(
-      "CREATE CROP API ERROR:",
+      "GET CROPS API ERROR:",
       error,
     );
 
