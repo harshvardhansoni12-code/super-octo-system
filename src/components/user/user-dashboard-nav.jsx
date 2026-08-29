@@ -6,9 +6,9 @@ import { ChevronRight } from "lucide-react";
 const navItems = [
   "Overview",
   "Crops on sale",
-  "Advisory",
-  "Records",
-  "Settings",
+  "Availability",
+  "Buy-Accomodies",
+  "Profile",
 ];
 
 export default function UserDashboardNav({
@@ -22,10 +22,21 @@ export default function UserDashboardNav({
         Workspace
       </p>
       {navItems.map((item) =>
-        item === "Overview" || item === "Crops on sale" ? (
+        item === "Overview" ||
+        item === "Crops on sale" ||
+        item === "Availability" ||
+        item === "Buy-Accomodies" ? (
           <Link
             key={item}
-            href={item === "Overview" ? "/user-dashboard" : "/crops-on-sale"}
+            href={
+              item === "Overview"
+                ? "/user-dashboard"
+                : item === "Crops on sale"
+                  ? "/crops-on-sale"
+                  : item === "Availability"
+                    ? "/availability"
+                    : "/buy-accommodation"
+            }
             onClick={() => setMobileNav(false)}
             className={`mb-1 flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-left text-sm ${activeNav === item ? "bg-[#dcebc9] font-semibold text-[#19352a]" : "text-[#91a298] hover:bg-[#e5ecdf] hover:text-[#19352a]"}`}
           >
