@@ -12,6 +12,7 @@ import {
   UserPlus,
   Users,
 } from "lucide-react";
+import OverviewAiChat from "@/components/shared/overview-ai-chat";
 
 const initialMembers = [
   ["Aarav Sharma", "aarav@kisa.com", "Field manager", "Active"],
@@ -246,6 +247,10 @@ export default function Overview() {
           ))}
         </div>
       </section>
+
+      <div className="mt-5">
+        <OverviewAiChat />
+      </div>
     </>
   );
 }

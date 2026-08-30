@@ -1,18 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  IndianRupee,
-  Leaf,
-  Loader2,
-  Map,
-  Package,
-  RefreshCw,
-} from "lucide-react";
+import { Leaf, Loader2, RefreshCw } from "lucide-react";
+import ListingRow from "@/components/shared/listing-row";
 
 export default function CropList({
   title = "Your crops",
   description = "Crops you have listed for sale.",
+  query = "",
+  interactive = false,
+  onChat,
+  onNegotiate,
 }) {
   const [crops, setCrops] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -23,29 +21,24 @@ export default function CropList({
       setLoading(true);
       setError("");
 
-      const response = await fetch(
-        "/api/v1/user/crops/all",
-        {
-          method: "GET",
-          cache: "no-store",
-        },
-      );
+      // Crops already has a real API — search isn't implemented on the
+      // backend yet, so we filter client-side for now until it's added.
+      const response = await fetch("/api/v1/user/crops/all", {
+        method: "GET",
+        cache: "no-store",
+      });
 
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(
-          result.error || "Failed to load crops",
-        );
+        throw new Error(result.error || "Failed to load crops");
       }
 
       setCrops(result.crops || []);
     } catch (error) {
       console.error("LOAD CROPS ERROR:", error);
 
-      setError(
-        error.message || "Failed to load crops",
-      );
+      setError(error.message || "Failed to load crops");
     } finally {
       setLoading(false);
     }
@@ -54,6 +47,14 @@ export default function CropList({
   useEffect(() => {
     loadCrops();
   }, []);
+
+  const visibleCrops = query
+    ? crops.filter(
+        (crop) =>
+          crop.name.toLowerCase().includes(query.toLowerCase()) ||
+          crop.type.toLowerCase().includes(query.toLowerCase()),
+      )
+    : crops;
 
   return (
     <section>
@@ -67,9 +68,7 @@ export default function CropList({
             {title}
           </h2>
 
-          <p className="mt-2 text-sm text-[#718078]">
-            {description}
-          </p>
+          <p className="mt-2 text-sm text-[#718078]">{description}</p>
         </div>
 
         <button
@@ -78,12 +77,7 @@ export default function CropList({
           disabled={loading}
           className="inline-flex items-center justify-center gap-2 rounded-lg border border-[#d4dfd2] bg-white px-4 py-2.5 text-xs font-semibold text-[#476650] transition hover:bg-[#f6f8f3] disabled:cursor-not-allowed disabled:opacity-60"
         >
-          <RefreshCw
-            className={`size-4 ${
-              loading ? "animate-spin" : ""
-            }`}
-          />
-
+          <RefreshCw className={`size-4 ${loading ? "animate-spin" : ""}`} />
           Refresh
         </button>
       </div>
@@ -99,13 +93,9 @@ export default function CropList({
 
       {!loading && error && (
         <div className="mt-6 rounded-2xl border border-red-200 bg-red-50 p-5">
-          <p className="font-semibold text-red-700">
-            Could not load crops
-          </p>
+          <p className="font-semibold text-red-700">Could not load crops</p>
 
-          <p className="mt-1 text-sm text-red-600">
-            {error}
-          </p>
+          <p className="mt-1 text-sm text-red-600">{error}</p>
 
           <button
             type="button"
@@ -117,15 +107,13 @@ export default function CropList({
         </div>
       )}
 
-      {!loading && !error && crops.length === 0 && (
+      {!loading && !error && visibleCrops.length === 0 && (
         <div className="mt-6 flex min-h-52 flex-col items-center justify-center rounded-2xl border border-dashed border-[#cfdacb] bg-white p-8 text-center">
           <span className="flex size-12 items-center justify-center rounded-full bg-[#edf3e8] text-[#668b45]">
             <Leaf className="size-6" />
           </span>
 
-          <h3 className="mt-4 font-semibold">
-            No crops listed yet
-          </h3>
+          <h3 className="mt-4 font-semibold">No crops listed yet</h3>
 
           <p className="mt-1 text-sm text-[#78907c]">
             Your crop listings will appear here.
@@ -133,82 +121,24 @@ export default function CropList({
         </div>
       )}
 
-      {!loading && !error && crops.length > 0 && (
+      {!loading && !error && visibleCrops.length > 0 && (
         <>
-          <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-            {crops.map((crop) => (
-              <article
+          <div className="mt-6 space-y-3">
+            {visibleCrops.map((crop) => (
+              <ListingRow
                 key={crop.id}
-                className="rounded-2xl border border-[#dce4d8] bg-white p-5 transition hover:border-[#b9cdb0]"
-              >
-                <div className="flex items-start justify-between">
-                  <span className="flex size-10 items-center justify-center rounded-xl bg-[#edf3e8] text-[#668b45]">
-                    <Leaf className="size-5" />
-                  </span>
-
-                  <span className="rounded-full bg-[#e8f2df] px-2.5 py-1 text-[10px] font-bold uppercase text-[#5b823e]">
-                    {crop.type}
-                  </span>
-                </div>
-
-                <h3 className="mt-5 text-xl font-semibold text-[#19352a]">
-                  {crop.name}
-                </h3>
-
-                <div className="mt-5 space-y-3">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="flex items-center gap-2 text-[#78907c]">
-                      <Map className="size-4" />
-                      Farm area
-                    </span>
-
-                    <span className="font-semibold">
-                      {crop.area} acres
-                    </span>
-                  </div>
-
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="flex items-center gap-2 text-[#78907c]">
-                      <Package className="size-4" />
-                      Quantity
-                    </span>
-
-                    <span className="font-semibold">
-                      {crop.quantity} kg
-                    </span>
-                  </div>
-
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="flex items-center gap-2 text-[#78907c]">
-                      <IndianRupee className="size-4" />
-                      Price
-                    </span>
-
-                    <span className="font-semibold">
-                      ₹{crop.price}/kg
-                    </span>
-                  </div>
-                </div>
-
-                <div className="mt-5 border-t border-[#edf1ed] pt-4">
-                  <p className="text-xs text-[#92a095]">
-                    Listed on{" "}
-                    {new Date(
-                      crop.createdAt,
-                    ).toLocaleDateString("en-IN", {
-                      day: "numeric",
-                      month: "short",
-                      year: "numeric",
-                    })}
-                  </p>
-                </div>
-              </article>
+                item={crop}
+                itemType="crop"
+                interactive={interactive}
+                onChat={onChat}
+                onNegotiate={onNegotiate}
+              />
             ))}
           </div>
 
           <p className="mt-4 text-xs text-[#829084]">
-            {crops.length} crop
-            {crops.length !== 1 ? "s" : ""} listed
+            {visibleCrops.length} crop
+            {visibleCrops.length !== 1 ? "s" : ""} listed
           </p>
         </>
       )}
