@@ -3,9 +3,10 @@
 import { useState } from "react";
 
 import DashboardHeader from "@/components/dashboard-header";
-import AdminSidebar from "@/components/adminDashboard/AdminSidebar";
+import Sidebar from "@/components/shared/sidebar";
 import Overview from "@/components/adminDashboard/Overview";
 import Crops from "@/components/adminDashboard/Crops";
+import ListingTab from "@/components/shared/listing-tab";
 
 export default function AdminDashboardClient({
   session,
@@ -24,19 +25,41 @@ export default function AdminDashboardClient({
       case "Crops":
         return <Crops />;
 
+      case "Services":
+        return (
+          <ListingTab
+            itemType="service"
+            endpoint="/api/v1/user/services/all"
+            dataKey="services"
+            title="Service listings"
+            description="Every service listed on the platform. Read-only for admins."
+            searchPlaceholder="Search services"
+            emptyLabel="No services found"
+            interactive={false}
+            showRecommendations
+            recommendationType="service"
+          />
+        );
+
+      case "Goods":
+        return (
+          <ListingTab
+            itemType="good"
+            endpoint="/api/v1/user/goods/all"
+            dataKey="goods"
+            title="Goods listings"
+            description="Every good listed on the platform. Read-only for admins."
+            searchPlaceholder="Search goods"
+            emptyLabel="No goods found"
+            interactive={false}
+            showRecommendations
+            recommendationType="good"
+          />
+        );
+
       case "Members":
         return (
           <PlaceholderPage title="Members" />
-        );
-
-      case "Reports":
-        return (
-          <PlaceholderPage title="Reports" />
-        );
-
-      case "System health":
-        return (
-          <PlaceholderPage title="System health" />
         );
 
       default:
@@ -55,7 +78,8 @@ export default function AdminDashboardClient({
       />
 
       <div className="mx-auto flex max-w-[1440px]">
-        <AdminSidebar
+        <Sidebar
+          role="ADMIN"
           activeNav={activeNav}
           setActiveNav={setActiveNav}
           mobileNav={mobileNav}
