@@ -19,6 +19,25 @@ export async function DELETE(request) {
       );
     }
 
+    const { searchParams } = new URL(request.url);
+    let serviceId = searchParams.get("id") || searchParams.get("serviceId");
+
+    if (!serviceId) {
+      try {
+        const body = await request.json();
+        serviceId = body.id || body.serviceId;
+      } catch (e) {
+        // body might be empty in DELETE request
+      }
+    }
+
+    if (!serviceId) {
+      return NextResponse.json(
+        { error: "Service ID is required" },
+        { status: 400 },
+      );
+    }
+
     const result = await deleteService(session.user.id, serviceId);
 
     if (result.error) {

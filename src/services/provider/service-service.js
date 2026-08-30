@@ -138,7 +138,6 @@ export async function updateService(serviceProviderId, serviceId, data) {
       data: {
         ...(name && { name }),
         ...(type && { type }),
-        ...(description && { description }),
         ...(prices !== undefined && {
           prices: prices ? parseFloat(prices) : null,
         }),

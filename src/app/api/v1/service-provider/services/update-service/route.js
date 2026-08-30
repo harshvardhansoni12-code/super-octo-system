@@ -21,6 +21,19 @@ export async function PUT(request) {
     }
 
     const body = await request.json();
+    const { searchParams } = new URL(request.url);
+    const serviceId =
+      body.serviceId ||
+      body.id ||
+      searchParams.get("id") ||
+      searchParams.get("serviceId");
+
+    if (!serviceId) {
+      return NextResponse.json(
+        { error: "Service ID is required" },
+        { status: 400 },
+      );
+    }
 
     const result = await updateService(session.user.id, serviceId, body);
 
