@@ -24,7 +24,21 @@ export const authOptions = {
           : await prisma.user.findUnique({
               where: { email: credentials.email },
             });
-        const accountFound = adminFound ?? userFound;
+        const serviceProviderFound =
+          adminFound || userFound
+            ? null
+            : await prisma.serviceProvider.findUnique({
+                where: { email: credentials.email },
+              });
+        const goodProviderFound =
+          adminFound || userFound || serviceProviderFound
+            ? null
+            : await prisma.goodProvider.findUnique({
+                where: { email: credentials.email },
+              });
+
+        const accountFound =
+          adminFound ?? userFound ?? serviceProviderFound ?? goodProviderFound;
 
         if (!accountFound?.password) {
           return null;
@@ -43,7 +57,7 @@ export const authOptions = {
           id: accountFound.id,
           email: accountFound.email,
           name: accountFound.name,
-          role: accountFound.role,
+          role: accountFound.role ?? "USER",
         };
       },
     }),

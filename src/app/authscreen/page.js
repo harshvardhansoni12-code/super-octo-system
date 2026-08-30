@@ -36,6 +36,21 @@ export default function AuthScreen() {
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const accountTypeMap = {
+    user: { label: "user", route: "/api/v1/user/register", role: "USER" },
+    admin: { label: "admin", route: "/api/v1/admin/create", role: "ADMIN" },
+    serviceProvider: {
+      label: "service provider",
+      route: "/api/v1/service-provider/register",
+      role: "SERVICE_PROVIDER",
+    },
+    goodsProvider: {
+      label: "goods provider",
+      route: "/api/v1/goods-provider/register",
+      role: "GOODS_PROVIDER",
+    },
+  };
+
   function changeMode(nextMode) {
     setMode(nextMode);
     setError("");
@@ -57,28 +72,25 @@ export default function AuthScreen() {
     const formData = new FormData(event.currentTarget);
     const email = formData.get("email");
     const password = formData.get("password");
-    const isAdmin = accountType === "admin";
+    const selectedAccount = accountTypeMap[accountType];
 
     try {
       if (mode === "signup") {
-        const response = await fetch(
-          isAdmin ? "/api/v1/admin/create" : "/api/v1/user/register",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              name: formData.get("name"),
-              email,
-              password,
-            }),
-          },
-        );
+        const response = await fetch(selectedAccount.route, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: formData.get("name"),
+            email,
+            password,
+          }),
+        });
         const data = await response.json().catch(() => ({}));
 
         if (!response.ok) {
           throw new Error(
             data.error ||
-              `Unable to create your ${isAdmin ? "admin" : "user"} account.`,
+              `Unable to create your ${selectedAccount.label} account.`,
           );
         }
 
@@ -104,16 +116,29 @@ export default function AuthScreen() {
       }
 
       const session = await getSession();
-      const expectedRole = isAdmin ? "ADMIN" : "USER";
+      const sessionRole = session?.user?.role;
+      const expectedRole = selectedAccount.role;
 
-      if (session?.user?.role !== expectedRole) {
+      if (!sessionRole) {
+        throw new Error("Authentication session is missing.");
+      }
+
+      if (sessionRole !== expectedRole) {
         await signOut({ redirect: false });
         throw new Error(
-          `This account is not registered as an ${isAdmin ? "admin" : "user"}.`,
+          `This account is not registered as a ${selectedAccount.label}.`,
         );
       }
 
-      router.replace(isAdmin ? "/admin-dashboard" : "/user-dashboard");
+      if (sessionRole === "ADMIN") {
+        router.replace("/admin-dashboard");
+      } else if (sessionRole === "SERVICE_PROVIDER") {
+        router.replace("/service-provider-dashboard");
+      } else if (sessionRole === "GOODS_PROVIDER") {
+        router.replace("/goods-provider-dashboard");
+      } else {
+        router.replace("/user-dashboard");
+      }
     } catch (submitError) {
       setError(submitError.message);
     } finally {
@@ -137,8 +162,8 @@ export default function AuthScreen() {
             <div>
               <CardTitle className="text-3xl tracking-[-0.04em]">
                 {mode === "login"
-                  ? `Welcome back${accountType === "admin" ? ", admin" : ""}`
-                  : `Create your ${accountType === "admin" ? "admin" : "user"} account`}
+                  ? `Welcome back${accountType === "admin" ? ", admin" : accountType === "serviceProvider" ? ", service provider" : accountType === "goodsProvider" ? ", goods provider" : ""}`
+                  : `Create your ${accountTypeMap[accountType].label} account`}
               </CardTitle>
               <CardDescription className="mt-2 text-base">
                 {mode === "login"
@@ -151,7 +176,7 @@ export default function AuthScreen() {
 
             {/* Account type pill toggle */}
             <div
-              className="flex rounded-full bg-[#eef3ed] p-1 shadow-sm"
+              className="grid grid-cols-2 gap-2 rounded-full bg-[#eef3ed] p-1 shadow-sm"
               role="group"
               aria-label="Account type"
             >
@@ -159,17 +184,37 @@ export default function AuthScreen() {
                 aria-pressed={accountType === "user"}
                 onClick={() => changeAccountType("user")}
                 type="button"
-                className={`flex flex-1 items-center justify-center gap-2 rounded-full px-4 py-3 text-xs font-semibold tracking-[0.05em] uppercase transition-all duration-200 ${accountType === "user" ? "bg-[#214a38] text-white shadow-sm" : "text-[#718078] hover:text-[#214a38]"}`}
+                className={`flex items-center justify-center gap-2 rounded-full px-3 py-2 text-[10px] font-semibold tracking-[0.05em] uppercase transition-all duration-200 ${accountType === "user" ? "bg-[#214a38] text-white shadow-sm" : "text-[#718078] hover:text-[#214a38]"}`}
               >
-                <User className="size-4" />I am a user
+                <User className="size-4" />
+                User
+              </button>
+              <button
+                aria-pressed={accountType === "serviceProvider"}
+                onClick={() => changeAccountType("serviceProvider")}
+                type="button"
+                className={`flex items-center justify-center gap-2 rounded-full px-3 py-2 text-[10px] font-semibold tracking-[0.05em] uppercase transition-all duration-200 ${accountType === "serviceProvider" ? "bg-[#214a38] text-white shadow-sm" : "text-[#718078] hover:text-[#214a38]"}`}
+              >
+                <Tractor className="size-4" />
+                Service
+              </button>
+              <button
+                aria-pressed={accountType === "goodsProvider"}
+                onClick={() => changeAccountType("goodsProvider")}
+                type="button"
+                className={`flex items-center justify-center gap-2 rounded-full px-3 py-2 text-[10px] font-semibold tracking-[0.05em] uppercase transition-all duration-200 ${accountType === "goodsProvider" ? "bg-[#214a38] text-white shadow-sm" : "text-[#718078] hover:text-[#214a38]"}`}
+              >
+                <Check className="size-4" />
+                Goods
               </button>
               <button
                 aria-pressed={accountType === "admin"}
                 onClick={() => changeAccountType("admin")}
                 type="button"
-                className={`flex flex-1 items-center justify-center gap-2 rounded-full px-4 py-3 text-xs font-semibold tracking-[0.05em] uppercase transition-all duration-200 ${accountType === "admin" ? "bg-[#214a38] text-white shadow-sm" : "text-[#718078] hover:text-[#214a38]"}`}
+                className={`flex items-center justify-center gap-2 rounded-full px-3 py-2 text-[10px] font-semibold tracking-[0.05em] uppercase transition-all duration-200 ${accountType === "admin" ? "bg-[#214a38] text-white shadow-sm" : "text-[#718078] hover:text-[#214a38]"}`}
               >
-                <ShieldCheck className="size-4" />I am an admin
+                <ShieldCheck className="size-4" />
+                Admin
               </button>
             </div>
           </CardHeader>

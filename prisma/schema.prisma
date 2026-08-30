@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -9,16 +6,15 @@ datasource db {
   provider = "postgresql"
 }
 
-
 model User {
-  id           String         @id @default(uuid())
-  email        String         @unique
-  name         String?
-  password     String 
-  role         String         @default("USER")
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-  crops        Crops[]
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String?
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  role      String   @default("USER")
+  crops     Crops[]
 }
 
 model Crops {
@@ -26,12 +22,78 @@ model Crops {
   name      String
   type      String
   area      Float
-  quantity  Float
-  price     Float
   userId    String
-  user      User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  price     Float
+  quantity  Float
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model ServiceProvider {
+  id          String    @id @default(uuid()) @map("Id") @db.Uuid
+  name        String    @map("Name")
+  email       String    @unique @map("Email")
+  password    String    @map("Password")
+  role        Role      @default(SERVICE_PROVIDER) @map("Role")
+  services    Json?     @map("Services")
+  createdAt   DateTime? @default(now()) @map("CreatedAt")
+  rating      Decimal?  @map("Rating")
+  location    String?   @map("Location")
+  phone       String?   @map("Phone")
+  serviceList Service[] @relation("ServiceProviderServices")
+
+  @@map("ServiceProviders")
+}
+
+model Service {
+  id                String          @id @default(uuid()) @map("id") @db.Uuid
+  name              String          @map("Name")
+  createdAt         DateTime?       @default(now()) @map("CreatedAt")
+  prices            Decimal?        @map("Prices")
+  type              ServiceType     @map("Type")
+  availableFrom     DateTime?       @map("Availablefrom")
+  serviceProviderId String          @map("ServiceProviderID") @db.Uuid
+  updatedAt         DateTime?       @updatedAt @map("UpdatedAt")
+  imageUrl          String?         @map("ImageURL")
+  availableTo       DateTime?       @map("Availableto")
+  serviceProvider   ServiceProvider @relation("ServiceProviderServices", fields: [serviceProviderId], references: [id])
+
+  @@map("Services")
+}
+
+model GoodProvider {
+  id          String    @id @default(uuid()) @map("Id") @db.Uuid
+  name        String    @map("Name")
+  email       String    @unique @map("Email")
+  password    String    @map("Password")
+  role        Role      @default(GOODS_PROVIDER) @map("Role")
+  companyName String?   @map("CompanyName")
+  phone       String?   @map("Phone")
+  location    String?   @map("Location")
+  rating      Decimal?  @map("Rating")
+  services    Json?     @map("Services")
+  createdAt   DateTime? @default(now()) @map("CreatedAt")
+  goods       Good[]    @relation("GoodProviderGoods")
+
+  @@map("GoodProviders")
+}
+
+model Good {
+  id             String        @id @default(uuid()) @map("Id") @db.Uuid
+  name           String        @map("Name")
+  category       GoodsCategory @map("Category")
+  price          Decimal?      @map("Price")
+  stock          Int?          @map("Stock")
+  unit           String?       @map("Unit")
+  description    String?       @map("Description")
+  imageUrl       String?       @map("ImageURL")
+  goodProviderId String        @map("GoodProviderID") @db.Uuid
+  createdAt      DateTime?     @default(now()) @map("CreatedAt")
+  updatedAt      DateTime?     @updatedAt @map("UpdatedAt")
+  goodProvider   GoodProvider  @relation("GoodProviderGoods", fields: [goodProviderId], references: [id])
+
+  @@map("Goods")
 }
 
 model Admin {
@@ -39,8 +101,32 @@ model Admin {
   email     String   @unique
   name      String?
   password  String
-  role      String   @default("ADMIN")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  role      String   @default("ADMIN")
 }
 
+enum Role {
+  USER
+  ADMIN
+  SERVICE_PROVIDER
+  GOODS_PROVIDER
+}
+
+enum ServiceType {
+  FERTILIZER
+  PEST_CONTROL
+  IRRIGATION
+  HARVESTING
+  TRANSPORT
+  OTHER
+}
+
+enum GoodsCategory {
+  SEEDS
+  FERTILIZER
+  PESTICIDE
+  EQUIPMENT
+  IRRIGATION
+  OTHER
+}
