@@ -1,6 +1,7 @@
 "use client";
 
 import CropList from "@/components/user/crop-list";
+import RecommendationPanel from "@/components/shared/recommendation-panel";
 
 export default function Crops() {
   return (
@@ -19,10 +20,14 @@ export default function Crops() {
         </p>
       </div>
 
-      <CropList
-        title="All crops"
-        description="Every crop listed on the platform."
-      />
+      <div className="grid gap-5 xl:grid-cols-[1.2fr_0.8fr]">
+        <CropList
+          title="All crops"
+          description="Every crop listed on the platform."
+        />
+
+        <RecommendationPanel type="crop" />
+      </div>
     </section>
   );
 }

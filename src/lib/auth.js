@@ -80,6 +80,7 @@ export const authOptions = {
       if (existingAdmin) {
         user.id = existingAdmin.id;
         user.role = existingAdmin.role;
+        user.createdAt = existingAdmin.createdAt;
       } else if (!existingUser) {
         const createdUser = await prisma.user.create({
           data: {
@@ -90,9 +91,11 @@ export const authOptions = {
         });
         user.id = createdUser.id;
         user.role = createdUser.role;
+        user.createdAt = createdUser.createdAt;
       } else {
         user.id = existingUser.id;
         user.role = existingUser.role;
+        user.createdAt = existingUser.createdAt;
       }
       return true;
     },
@@ -102,6 +105,7 @@ export const authOptions = {
         token.email = user.email;
         token.name = user.name;
         token.role = user.role;
+        token.createdAt = user.createdAt;
       }
       return token;
     },
@@ -111,6 +115,7 @@ export const authOptions = {
         email: token.email,
         name: token.name,
         role: token.role,
+        createdAt: token.createdAt,
       };
       return session;
     },

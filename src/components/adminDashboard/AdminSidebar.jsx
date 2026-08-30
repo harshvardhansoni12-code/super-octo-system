@@ -1,11 +1,12 @@
 "use client";
 
 import {
-  BarChart3,
+  WrenchIcon,
   Leaf,
   Menu,
-  ShieldCheck,
+  Boxes,
   Users,
+  BarChart3,
   X,
 } from "lucide-react";
 
@@ -19,16 +20,16 @@ const navItems = [
     icon: Users,
   },
   {
-    name: "Reports",
-    icon: BarChart3,
+    name: "Services",
+    icon: WrenchIcon,
   },
   {
     name: "Crops",
     icon: Leaf,
   },
   {
-    name: "System health",
-    icon: ShieldCheck,
+    name: "Goods",
+    icon: Boxes,
   },
 ];
 
@@ -92,7 +93,7 @@ export default function AdminSidebar({
       </div>
 
       <div className="mt-10 rounded-xl bg-[#173b2b] p-4 text-white sm:mt-14">
-        <ShieldCheck className="size-5 text-[#f0c22e]" />
+        <Boxes className="size-5 text-[#f0c22e]" />
 
         <p className="mt-5 text-sm font-semibold">
           System is healthy.
