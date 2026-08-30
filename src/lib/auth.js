@@ -57,8 +57,7 @@ export const authOptions = {
           id: accountFound.id,
           email: accountFound.email,
           name: accountFound.name,
-          role: accountFound.role,
-          createdAt: accountFound.createdAt,
+          role: accountFound.role ?? "USER",
         };
       },
     }),
